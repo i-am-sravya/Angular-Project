@@ -11,6 +11,8 @@ import { AuthService } from 'src/app/services/auth.service';
 export class RegisterComponent {
 
   repeatPass: string = 'none';
+  displaying: string = "";
+  isAccountCreated: boolean = false;
 
   constructor(private authService: AuthService) {}
 
@@ -50,11 +52,30 @@ export class RegisterComponent {
   registerSubmited(){
     if(this.PWD.value == this.RPWD.value){
       this.repeatPass = 'none'
-      console.log("Submited");
 
-      this.authService.registerUser().subscribe(res => {
-        console.log(res);
+      this.authService.
+        registerUser([
+          this.registerForm.value.firstname,
+          this.registerForm.value.lastname,
+          this.registerForm.value.email,
+          this.registerForm.value.mobile,
+          this.registerForm.value.gender,
+          this.registerForm.value.pwd
+        ]).subscribe(res => {
+          if (res == "Success"){
+            this.displaying = "Account Created Successfully";
+            this.isAccountCreated = true;
+          }
+          else if (res == "AlreadyExist"){
+            this.displaying = "Account Already Exist. Try another Email.";
+            this.isAccountCreated = false;
+          }
+          else {
+            this.displaying = "Something went wrong";
+            this.isAccountCreated = false;
+          }
       })
+      console.log("Submited");
     }
     else{
       this.repeatPass = 'inline'
